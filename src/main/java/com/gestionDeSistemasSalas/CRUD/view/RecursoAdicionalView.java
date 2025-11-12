@@ -46,6 +46,7 @@ public class RecursoAdicionalView {
     public String editar(@PathVariable Long id, Model model) {
         RecursoAdicional recurso = recursoAdicionalRepository.findById(id).orElse(null);
         model.addAttribute("recurso", recurso);
+        model.addAttribute("salas", salaRepository.findAll());
         return "recursosForm";
     }
 
@@ -61,9 +62,17 @@ public class RecursoAdicionalView {
         binder.registerCustomEditor(Sala.class, new PropertyEditorSupport() {
             @Override
             public void setAsText(String text) {
-                Long id = Long.parseLong(text);
-                Sala sala = salaRepository.findById(id).orElse(null);
-                setValue(sala);
+                if (text == null || text.trim().isEmpty()) {
+                    setValue(null); // <- evita NumberFormatException
+                } else {
+                    try {
+                        Long id = Long.parseLong(text);
+                        Sala sala = salaRepository.findById(id).orElse(null);
+                        setValue(sala);
+                    } catch (NumberFormatException e) {
+                        setValue(null);
+                    }
+                }
             }
         });
     }

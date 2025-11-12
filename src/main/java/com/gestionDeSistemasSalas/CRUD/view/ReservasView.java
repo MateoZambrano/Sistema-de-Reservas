@@ -52,6 +52,8 @@ public class ReservasView {
     public String editar(@PathVariable Long id, Model model) {
         Reserva reserva = reservaRepository.findById(id).orElse(null);
         model.addAttribute("reserva", reserva);
+        model.addAttribute("salas", salaRepository.findAll());
+        model.addAttribute("usuarios", usuarioRepository.findAll());
         return "reservasForm";
     }
 
